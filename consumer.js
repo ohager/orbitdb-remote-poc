@@ -25,11 +25,12 @@ async function start() {
 
   console.info('Connecting to IPFS daemon', JSON.stringify(configConsumer))
   ipfs = await Ipfs.create(configConsumer)
+  ipfs.bootstrap.add('/ip6/::1/tcp/4001/p2p/QmSi5Gj2XNYigN5VaPQsMWuCAK98QF1vYk59ZwmfzjP4fW')
   console.info('Starting OrbitDb...')
   orbitdb = await OrbitDB.createInstance(ipfs)
   console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
   const database = await orbitdb.open(databaseAddress)
-  await database.load(1)
+  await database.load()
   console.info(`Database initialized - Address: ${database.address}`)
 
   database.events.on('replicated', async () => {
