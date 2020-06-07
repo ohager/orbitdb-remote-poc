@@ -1,0 +1,24 @@
+{
+  "name": "orbitdb-remote-poc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:producer": "node ./producer.js",
+    "start:consumer": "node ./consumer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ohager/orbitdb-remote-poc.git"
+  },
+  "author": "ohager",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ohager/orbitdb-remote-poc/issues"
+  },
+  "homepage": "https://github.com/ohager/orbitdb-remote-poc#readme",
+  "dependencies": {
+    "ipfs": "^0.46.0",
+    "orbit-db": "^0.24.1"
+  }
+}
