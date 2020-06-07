@@ -5,15 +5,22 @@ const configProducer = require('./config.producer.json')
 let ipfs
 let intervalHandle
 let orbitdb
+let cleanedUp = false
 
 async function stop() {
-  console.info('Shutting down')
-  await orbitdb.stop()
-  await ipfs.stop()
+
+  if(cleanedUp) {
+    return
+  }
+
   if(intervalHandle){
     clearInterval(intervalHandle);
   }
+  console.info('Shutting down')
+  await orbitdb.stop()
+  await ipfs.stop()
   console.info('Done')
+  cleanedUp = true
 }
 
 async function start() {
@@ -25,7 +32,7 @@ async function start() {
   console.info('Starting OrbitDb...')
   orbitdb = await OrbitDB.createInstance(ipfs)
   console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
-  const database = await orbitdb.docstore('database', {sync:true})
+  database = await orbitdb.docstore('database', {sync:true})
   await database.load(1)
   console.info(`Database initialized - Address: ${database.address}`)
 

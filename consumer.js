@@ -33,10 +33,8 @@ async function start() {
   await database.load()
   console.info(`Database initialized - Address: ${database.address}`)
 
-  database.events.on('replicated', async () => {
-    console.log('replicated')
-    const records = await database.get('')
-    records.forEach(console.log)
+  database.events.on('replicate', async (address, entry) => {
+    console.log(`Got data from [${address}]: `, JSON.stringify(entry.payload.value))
   })
 
   process.on('SIGTERM', stop)
