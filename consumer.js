@@ -40,7 +40,7 @@ async function start() {
   console.info(`Database initialized - Address: ${database.address}`)
 
   database.events.on('replicate', async (address, entry) => {
-    if(!entry.payload && entry.payload.value) return
+    if(!entry.payload) return
     console.log(`Got data from [${address}]: `, JSON.stringify(entry.payload.value))
   })
 
