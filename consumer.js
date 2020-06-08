@@ -17,7 +17,12 @@ async function stop() {
 }
 
 async function start() {
-  const databaseAddress = process.argv[2]
+  const peerId = process.argv[2]
+  const databaseAddress = process.argv[3]
+
+  if(!peerId){
+    throw Error('Need an peerId argument')
+  }
 
   if(!databaseAddress){
     throw Error('Need an address argument')
@@ -25,7 +30,8 @@ async function start() {
 
   console.info('Connecting to IPFS daemon', JSON.stringify(configConsumer))
   ipfs = await Ipfs.create(configConsumer)
-  ipfs.bootstrap.add('/ip6/::1/tcp/4001/p2p/QmSi5Gj2XNYigN5VaPQsMWuCAK98QF1vYk59ZwmfzjP4fW')
+  console.info('Connecting to swarm using', `/ipfs/${peerId}`)
+  await ipfs.swarm.connect(`/ipfs/${peerId}`)
   console.info('Starting OrbitDb...')
   orbitdb = await OrbitDB.createInstance(ipfs)
   console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
@@ -34,6 +40,7 @@ async function start() {
   console.info(`Database initialized - Address: ${database.address}`)
 
   database.events.on('replicate', async (address, entry) => {
+    if(!entry.payload && entry.payload.value) return
     console.log(`Got data from [${address}]: `, JSON.stringify(entry.payload.value))
   })
 
