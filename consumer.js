@@ -28,21 +28,26 @@ async function start() {
     throw Error('Need an address argument')
   }
 
-  console.info('Connecting to IPFS daemon', JSON.stringify(configConsumer))
+  console.info('Connecting to IPFS daemon', JSON.stringify(configConsumer, null, '\t'))
   ipfs = await Ipfs.create(configConsumer)
-  console.info('Connecting to swarm using', `/ipfs/${peerId}`)
-  await ipfs.swarm.connect(`/ipfs/${peerId}`)
+  const swarmAddress= `/dns4/star-signal.cloud.ipfs.team/wss/p2p-webrtc-star/p2p/${peerId}`
+  console.info('Connecting to swarm using', swarmAddress)
+  await ipfs.swarm.connect(swarmAddress)
   console.info('Starting OrbitDb...')
+  ipfs.pubsub.subscribe('fruit-of-the-day', ({data}) => {
+    console.log(JSON.stringify(data.toString()))
+  })
+
   orbitdb = await OrbitDB.createInstance(ipfs)
   console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
   const database = await orbitdb.open(databaseAddress)
   await database.load()
   console.info(`Database initialized - Address: ${database.address}`)
 
-  database.events.on('replicate', async (address, entry) => {
-    if(!entry.payload) return
-    console.log(`Got data from [${address}]: `, JSON.stringify(entry.payload.value))
-  })
+  // database.events.on('replicate', async (address, entry) => {
+  //   if(!entry.payload) return
+  //   console.log(`Got data from [${address}]: `, JSON.stringify(entry.payload.value))
+  // })
 
   process.on('SIGTERM', stop)
   process.on('SIGINT', stop)

@@ -28,6 +28,12 @@ async function start() {
   ipfs = await Ipfs.create(configProducer)
   const ipfsId = await ipfs.id()
   console.log(`IPFS Peer ID: ${ipfsId.id}`)
+  console.log('Swarm addresses')
+  const peerInfos = await ipfs.swarm.addrs()
+  peerInfos.forEach(info => {
+    console.log(info.id)
+    info.addrs.forEach(addr => console.log(addr.toString()))
+  })
   console.info('Starting OrbitDb...')
   orbitdb = await OrbitDB.createInstance(ipfs)
   console.info(`Orbit Database instantiated ${orbitdb.identity.id}`)
@@ -39,6 +45,9 @@ async function start() {
   intervalHandle = setInterval(async () => {
     const hash = await database.put({_id: ++i, foo: 'bar_' + i })
     console.log('added', hash)
+    const topic = 'fruit-of-the-day'
+    const msg = Buffer.from(`banana${i}`)
+    await ipfs.pubsub.publish(topic, msg)
   }, 10000)
 
 
