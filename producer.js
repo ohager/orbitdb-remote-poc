@@ -43,19 +43,18 @@ async function start() {
 
   let i = 0
   intervalHandle = setInterval(async () => {
-    const hash = await database.put({_id: ++i, foo: 'bar_' + i })
-    console.log('added', hash)
+    // const hash = await database.put({_id: ++i, foo: 'bar_' + i })
+    // console.log('added', hash)
     const topic = 'fruit-of-the-day'
-    const msg = Buffer.from(`banana${i}`)
+    const msg = Buffer.from(`banana${++i}`)
     await ipfs.pubsub.publish(topic, msg)
-  }, 10000)
+    console.log('Sent', msg.toString('utf-8'))
+  }, 5000)
 
 
   console.log(`Open consumer: npm run start:consumer ${ipfsId.id} ${database.address}`)
 
   process.on('SIGTERM', stop)
-  process.on('SIGINT', stop)
-  process.on('SIGQUIT', stop)
 }
 
 

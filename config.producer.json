@@ -1,38 +1,26 @@
 {
+  "start": true,
+  "relay": {
+    "enabled": false,
+    "hop": {
+      "enabled": false
+    }
+  },
+  "preload": {
+    "enabled": false
+  },
   "repo": "./ipfs/orbitdb-poc-b",
-  "silent": false,
+  "EXPERIMENTAL": { "pubsub": true },
   "config": {
+    "Bootstrap": [
+      "/dns4/ipfs-ws.vps.revolunet.com/tcp/443/wss/ipfs/QmSEbJSiV8TXyaG9oBJRs2sJ5sttrNQJvbSeGe7Vt8ZBqt"
+    ],
     "Addresses": {
       "Swarm": [
-        "/ip4/0.0.0.0/tcp/4001"
-      ],
-      "Announce": [
-        "/ip4/152.254.231.248/tcp/4001"
+        "/ip4/127.0.0.1/tcp/4001",
+        "/dns4/libp2p-rdv.vps.revolunet.com/tcp/443/wss/p2p-webrtc-star"
       ]
-    },
-    "Discovery": {
-      "MDNS": {
-        "Enabled": true,
-        "Interval": 10
-      }
-    },
-    "Routing": {
-      "Type": "dht"
-    },
-    "Ipns": {
-      "RepublishPeriod": "",
-      "RecordLifetime": "",
-      "ResolveCacheSize": 128
-    },
-    "Bootstrap": [
-      "/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb",
-      "/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt",
-      "/ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ",
-      "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN",
-      "/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa"
-    ]
-  },
-  "EXPERIMENTAL": {
-    "pubsub": true
+    }
   }
 }
+
