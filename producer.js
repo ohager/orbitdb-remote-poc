@@ -31,13 +31,13 @@ async function start() {
 
   let i = 0
   intervalHandle = setInterval(async () => {
-    const hash = await database.put({_id: ++i, foo: 'bar_' + i })
-    console.log('added', hash)
+    // const hash = await database.put({_id: ++i, foo: 'bar_' + i })
+    // console.log('added', hash)
     const topic = 'burst-rocks'
-    const msg = Buffer.from(`sodium_${i}`)
+    const msg = Buffer.from(`sodium_${++i}`)
     await ipfs.pubsub.publish(topic, msg)
     console.log(`published [${msg.toString()}] to ${topic}`)
-  }, 5000)
+  }, 2000)
 
   process.on('SIGTERM', stop)
   process.on('SIGINT', stop)
@@ -46,3 +46,5 @@ async function start() {
 
 
 start()
+
+

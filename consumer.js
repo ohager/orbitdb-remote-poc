@@ -4,11 +4,16 @@ const configConsumer = require('./config.consumer.json')
 
 let ipfs
 let intervalHandle
+let reconnectInterval
 let orbitdb
 
 async function stop() {
   if(intervalHandle){
     clearInterval(intervalHandle);
+  }
+
+  if(reconnectInterval){
+    clearInterval(reconnectInterval)
   }
 
   console.info('Shutting down')
@@ -31,8 +36,19 @@ async function start() {
 
   const topic = 'burst-rocks'
   const receiveMsg = (msg) => console.log(msg.data.toString())
-  await ipfs.pubsub.subscribe(topic, receiveMsg)
+  ipfs.pubsub.subscribe(topic, receiveMsg)
   console.log(`subscribed to ${topic}`)
+
+  const tryReconnect =  () => {
+    console.log('Try connecting...')
+    ipfs.pubsub.subscribe(topic, receiveMsg)
+  }
+
+  ipfs.libp2p.on('peer:disconnected', () => {
+    console.log('Lost Producer')
+    ipfs.pubsub.unsubscribe(topic, receiveMsg)
+    setInterval(tryReconnect, 5000)
+  })
 
   console.info('Starting OrbitDb...')
   orbitdb = await OrbitDB.createInstance(ipfs)

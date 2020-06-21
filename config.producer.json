@@ -9,8 +9,6 @@
       ]
     },
     "Bootstrap" : [
-      "/ip4/77.56.66.83/tcp/17567/p2p/QmSi5Gj2XNYigN5VaPQsMWuCAK98QF1vYk59ZwmfzjP4fW",
-      "/ip4/77.56.66.83/tcp/4002/ws/p2p/QmdKvWk5BbyUetaSQdvgDRUbnL7M7aMu2Yv3wbjNbV6q4M",
       "/ip4/77.56.66.83/tcp/4001/p2p/QmdKvWk5BbyUetaSQdvgDRUbnL7M7aMu2Yv3wbjNbV6q4M"
     ]
   },
