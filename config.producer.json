@@ -7,7 +7,10 @@
         "/ip4/0.0.0.0/tcp/4001",
         "/ip4/0.0.0.0/tcp/4002/ws"
       ]
-    }
+    },
+    "Bootstrap" : [
+      "/ip4/77.56.66.83/tcp/4002/ws/p2p/QmWakKyFoVGrdhQcSABzuU4qjc4jPZeSKYzrPk3G2xxgid"
+    ]
   },
   "EXPERIMENTAL": {
     "pubsub": true
