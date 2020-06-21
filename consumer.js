@@ -7,12 +7,13 @@ let intervalHandle
 let orbitdb
 
 async function stop() {
-  console.info('Shutting down')
-  await orbitdb.stop()
-  await ipfs.stop()
   if(intervalHandle){
     clearInterval(intervalHandle);
   }
+
+  console.info('Shutting down')
+  await orbitdb.stop()
+  await ipfs.stop()
   console.info('Done')
 }
 
@@ -40,11 +41,13 @@ async function start() {
   await database.load(1)
   console.info(`Database initialized - Address: ${database.address}`)
 
-  database.events.on('replicated',() => {
-    console.log('replicated')
-    // const records = await database.get('')
-    // records.forEach(console.log)
-  })
+  const replicatedHandler = async () => {
+    console.log('--- Database was updated ----')
+    const records = await database.get('')
+    records.forEach(console.log)
+  }
+
+  database.events.on('replicated', replicatedHandler)
 
   process.on('SIGTERM', stop)
   process.on('SIGINT', stop)

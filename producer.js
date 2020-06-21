@@ -7,12 +7,13 @@ let intervalHandle
 let orbitdb
 
 async function stop() {
-  console.info('Shutting down')
-  await orbitdb.stop()
-  await ipfs.stop()
   if(intervalHandle){
     clearInterval(intervalHandle);
   }
+
+  console.info('Shutting down')
+  await orbitdb.stop()
+  await ipfs.stop()
   console.info('Done')
 }
 
@@ -32,10 +33,10 @@ async function start() {
   intervalHandle = setInterval(async () => {
     const hash = await database.put({_id: ++i, foo: 'bar_' + i })
     console.log('added', hash)
-    // const topic = 'burst-rocks'
-    // const msg = Buffer.from(`sodium_${++i}`)
-    // await ipfs.pubsub.publish(topic, msg)
-    // console.log(`published [${msg.toString()}] to ${topic}`)
+    const topic = 'burst-rocks'
+    const msg = Buffer.from(`sodium_${i}`)
+    await ipfs.pubsub.publish(topic, msg)
+    console.log(`published [${msg.toString()}] to ${topic}`)
   }, 5000)
 
   process.on('SIGTERM', stop)
