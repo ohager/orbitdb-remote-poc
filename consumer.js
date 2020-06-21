@@ -8,7 +8,7 @@ let orbitdb
 
 async function stop() {
   console.info('Shutting down')
-  await orbitdb.stop()
+  // await orbitdb.stop()
   await ipfs.stop()
   if(intervalHandle){
     clearInterval(intervalHandle);
@@ -17,33 +17,35 @@ async function stop() {
 }
 
 async function start() {
-  // const peerId = process.argv[2]
-  // const databaseAddress = process.argv[2]
-  //
-  // if(!databaseAddress){
-  //   throw Error('Need an address argument')
-  // }
+  const databaseAddress = process.argv[2]
 
-  console.info('Connecting to IPFS daemon', JSON.stringify(configConsumer, null, '\t'))
+  if(!databaseAddress){
+    throw Error('Need an address argument')
+  }
+
+  console.info('Connecting to IPFS daemon', JSON.stringify(configConsumer))
   ipfs = await Ipfs.create(configConsumer)
   console.info('Starting OrbitDb...')
-  ipfs.pubsub.subscribe('fruit-of-the-day', ({data}) => {
-    console.log(JSON.stringify(data.toString()))
+  // const topic = 'burst-rocks'
+  // const receiveMsg = (msg) => console.log(msg.data.toString())
+  //
+  // await ipfs.pubsub.subscribe(topic, receiveMsg)
+  // console.log(`subscribed to ${topic}`)
+  orbitdb = await OrbitDB.createInstance(ipfs)
+  console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
+  const database = await orbitdb.open(databaseAddress)
+  await database.load(1)
+  console.info(`Database initialized - Address: ${database.address}`)
+
+  database.events.on('replicated',() => {
+    console.log('replicated')
+    // const records = await database.get('')
+    // records.forEach(console.log)
   })
 
-  //
-  // orbitdb = await OrbitDB.createInstance(ipfs)
-  // console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
-  // const database = await orbitdb.open(databaseAddress)
-  // await database.load()
-  // console.info(`Database initialized - Address: ${database.address}`)
-  //
-  // database.events.on('replicate', async (address, entry) => {
-  //   if(!entry.payload) return
-  //   console.log(`Got data from [${address}]: `, JSON.stringify(entry.payload.value))
-  // })
-
   process.on('SIGTERM', stop)
+  process.on('SIGINT', stop)
+  process.on('SIGQUIT', stop)
 }
 
 

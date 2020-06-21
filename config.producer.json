@@ -1,26 +1,18 @@
 {
-  "start": true,
-  "relay": {
-    "enabled": false,
-    "hop": {
-      "enabled": false
-    }
-  },
-  "preload": {
-    "enabled": false
-  },
   "repo": "./ipfs/orbitdb-poc-b",
-  "EXPERIMENTAL": { "pubsub": true },
+  "silent": false,
   "config": {
-    "Bootstrap": [
-      "/dns4/ipfs-ws.vps.revolunet.com/tcp/443/wss/ipfs/QmSEbJSiV8TXyaG9oBJRs2sJ5sttrNQJvbSeGe7Vt8ZBqt"
-    ],
     "Addresses": {
       "Swarm": [
-        "/ip4/127.0.0.1/tcp/4001",
-        "/dns4/libp2p-rdv.vps.revolunet.com/tcp/443/wss/p2p-webrtc-star"
+        "/ip4/0.0.0.0/tcp/4001",
+        "/ip4/0.0.0.0/tcp/4002/ws"
       ]
-    }
+    },
+    "Bootstrap": [
+      "/ip4/77.56.66.83/tcp/44926/p2p/QmSi5Gj2XNYigN5VaPQsMWuCAK98QF1vYk59ZwmfzjP4fW"
+    ]
+  },
+  "EXPERIMENTAL": {
+    "pubsub": true
   }
 }
-
