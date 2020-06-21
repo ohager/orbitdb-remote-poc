@@ -8,7 +8,7 @@ let orbitdb
 
 async function stop() {
   console.info('Shutting down')
-  // await orbitdb.stop()
+  await orbitdb.stop()
   await ipfs.stop()
   if(intervalHandle){
     clearInterval(intervalHandle);
@@ -21,21 +21,21 @@ async function start() {
   ipfs = await Ipfs.create(configProducer)
   const id = await ipfs.id()
   console.log('IPFS connected', id)
-  // console.info('Starting OrbitDb...')
-  // orbitdb = await OrbitDB.createInstance(ipfs)
-  // console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
-  // const database = await orbitdb.docstore('database')
-  // await database.load(1)
-  // console.info(`Database initialized - Address: ${database.address}`)
+  console.info('Starting OrbitDb...')
+  orbitdb = await OrbitDB.createInstance(ipfs)
+  console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
+  const database = await orbitdb.docstore('database')
+  await database.load(1)
+  console.info(`Database initialized - Address: ${database.address}`)
 
   let i = 0
   intervalHandle = setInterval(async () => {
-    // const hash = await database.put({_id: ++i, foo: 'bar_' + i })
-    // console.log('added', hash)
-    const topic = 'burst-rocks'
-    const msg = Buffer.from(`sodium_${i}`)
-    await ipfs.pubsub.publish(topic, msg)
-    console.log(`published [${msg.toString()}] to ${topic}`)
+    const hash = await database.put({_id: ++i, foo: 'bar_' + i })
+    console.log('added', hash)
+    // const topic = 'burst-rocks'
+    // const msg = Buffer.from(`sodium_${++i}`)
+    // await ipfs.pubsub.publish(topic, msg)
+    // console.log(`published [${msg.toString()}] to ${topic}`)
   }, 5000)
 
   process.on('SIGTERM', stop)
