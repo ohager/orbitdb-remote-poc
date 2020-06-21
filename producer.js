@@ -19,6 +19,8 @@ async function stop() {
 async function start() {
   console.info('Connecting to IPFS daemon', JSON.stringify(configProducer))
   ipfs = await Ipfs.create(configProducer)
+  const id = await ipfs.id()
+  console.log('IPFS connected', id)
   console.info('Starting OrbitDb...')
   orbitdb = await OrbitDB.createInstance(ipfs)
   console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)

@@ -26,11 +26,8 @@ async function start() {
   console.info('Connecting to IPFS daemon', JSON.stringify(configConsumer))
   ipfs = await Ipfs.create(configConsumer)
   console.info('Starting OrbitDb...')
-  // const topic = 'burst-rocks'
-  // const receiveMsg = (msg) => console.log(msg.data.toString())
-  //
-  // await ipfs.pubsub.subscribe(topic, receiveMsg)
-  // console.log(`subscribed to ${topic}`)
+  const id = await ipfs.id()
+  console.log('IPFS connected', id)
   orbitdb = await OrbitDB.createInstance(ipfs)
   console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
   const database = await orbitdb.open(databaseAddress)
