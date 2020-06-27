@@ -27,6 +27,10 @@ async function bootIpfs() {
   console.log('IPFS booted', id)
 }
 
+const replicateHandler = async (address, {payload}) => {
+  console.log(`${address} replicated entry`, JSON.stringify(payload))
+}
+
 async function bootOrbitdb() {
   console.info('Starting OrbitDb...')
   const identity = await createIdentity({id: 'privateKey'});
@@ -39,6 +43,8 @@ async function bootOrbitdb() {
   })
   await database.load()
   console.info(`Database initialized - Address: ${database.address}`)
+
+  database.events.on('replicate', replicateHandler)
 }
 
 async function publishIpfsMessage(topic, message) {
