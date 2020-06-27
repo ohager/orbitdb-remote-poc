@@ -46,11 +46,16 @@ async function bootOrbitdb(databaseAddress) {
     console.log(`${address} updated ${count} items`)
   }
 
-  const replicateHandler = async (address, entry) => {
-    console.log(`${address} replicated entry`, JSON.stringify(entry))
+  const replicateHandler = async (address, {payload}) => {
+    console.log(`${address} replicated entry`, JSON.stringify(payload))
+
+    if(!payload) return Promise.resolve()
+
+    const newId = 2000 + payload.value._id
+    await database.put({_id: newId, "baz": `bar_${newId}`})
   }
 
-  const replicationProgressHandler = async (_, ipfsHash, ) => {
+  const replicationProgressHandler = async (_, ipfsHash,) => {
   }
 
   database.events.on('replicate', replicateHandler)

@@ -32,7 +32,11 @@ async function bootOrbitdb() {
   const identity = await createIdentity({id: 'privateKey'});
   orbitdb = await OrbitDB.createInstance(ipfs, {identity})
   console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity)}`)
-  database = await orbitdb.docstore('producer')
+  database = await orbitdb.docstore('producer', {
+    accessController: {
+      write: ["*"]
+    }
+  })
   await database.load()
   console.info(`Database initialized - Address: ${database.address}`)
 }
