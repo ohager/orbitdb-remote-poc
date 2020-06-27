@@ -53,7 +53,7 @@ async function publishIpfsMessage(topic, message) {
 }
 
 async function writeDatabase(data) {
-  const hash = await database.put(data, {pin: true})
+  const hash = await database.put(data)
   console.log('put into database:', hash, JSON.stringify(data))
 }
 
