@@ -55,9 +55,9 @@ async function start() {
   let i = entries.length ? entries[entries.length - 1]._id : 0
   console.log(`Loaded ${entries.length} entries, last id: ${i}`)
 
-  intervalHandle = setInterval(() => {
-    publishIpfsMessage('burst-rocks', Buffer.from(`producer_${++i}`))
-    writeDatabase({_id: i, foo: 'bar' + i})
+  intervalHandle = setInterval(async () => {
+    await publishIpfsMessage('burst-rocks', Buffer.from(`producer_${++i}`))
+    await writeDatabase({_id: i, foo: 'bar' + i})
   }, 2000)
 
 }
