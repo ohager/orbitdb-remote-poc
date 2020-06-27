@@ -9,7 +9,7 @@ const Config = {
       ]
     },
     Bootstrap: [
-      // "/ip4/77.56.66.83/tcp/4001/p2p/QmVmYesEWZm4L1YbrVhCvJEzCDNCvrU56E22HSDXiaC7HZ"
+      "/ip4/77.56.66.83/tcp/4001/p2p/QmVmYesEWZm4L1YbrVhCvJEzCDNCvrU56E22HSDXiaC7HZ"
     ]
   },
   Discovery: {

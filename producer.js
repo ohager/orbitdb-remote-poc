@@ -7,6 +7,7 @@ const {onShutdown} = require('node-graceful-shutdown')
 let ipfs
 let intervalHandle
 let orbitdb
+let database
 
 onShutdown('producer', async () => {
   console.info('Shutting down')
@@ -24,7 +25,6 @@ async function bootIpfs() {
   ipfs = await Ipfs.create(Config)
   const id = await ipfs.id()
   console.log('IPFS booted', id)
-  return ipfs
 }
 
 async function bootOrbitdb() {
@@ -32,21 +32,32 @@ async function bootOrbitdb() {
   const identity = await createIdentity({id: 'privateKey'});
   orbitdb = await OrbitDB.createInstance(ipfs, {identity})
   console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity)}`)
-  const database = await orbitdb.docstore('test2')
-  await database.load(1)
+  database = await orbitdb.docstore('producer')
+  await database.load()
   console.info(`Database initialized - Address: ${database.address}`)
+}
+
+async function publishIpfsMessage(topic, message) {
+  await ipfs.pubsub.publish(topic, message)
+  console.log(`published [${message.toString()}] to ${topic}`)
+}
+
+async function writeDatabase(data) {
+  const hash = await database.put(data, {pin: true})
+  console.log('put into database:', hash, JSON.stringify(data))
 }
 
 async function start() {
   await bootIpfs()
   await bootOrbitdb()
 
-  let i = 0
-  intervalHandle = setInterval(async () => {
-    const topic = 'burst-rocks'
-    const msg = Buffer.from(`sodium_${++i}`)
-    await ipfs.pubsub.publish(topic, msg)
-    console.log(`published [${msg.toString()}] to ${topic}`)
+  const entries = await database.get('');
+  let i = entries.length ? entries[entries.length - 1]._id : 0
+  console.log(`Loaded ${entries.length} entries, last id: ${i}`)
+
+  intervalHandle = setInterval(() => {
+    publishIpfsMessage('burst-rocks', Buffer.from(`producer_${++i}`))
+    writeDatabase({_id: i, foo: 'bar' + i})
   }, 2000)
 
 }
