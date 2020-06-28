@@ -8,6 +8,8 @@ Furthermore, it also publishes a message directly to IPFS, which can be listened
 The consumer connects to the OrbitDB database and replicates it. Additionally, it
 listens to the IPFS messages and database updates.
 
+![Demo](./assets/orbitdb-demo.gif)
+
 ## Installation
 
 > Needs at least NodeJS 12 installed
