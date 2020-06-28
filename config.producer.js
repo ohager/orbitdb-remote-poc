@@ -12,7 +12,7 @@ const Config = {
       // To establish a connection between the communicating peers for pubsub
       // you need to add it as bootstrapper
       // Note: You can do this dynamically
-      // "/ip4/<External IP>/tcp/4001/p2p/QmVmYesEWZm4L1YbrVhCvJEzCDNCvrU56E22HSDXiaC7HZ"
+      "/ip4/77.56.66.83/tcp/4001/p2p/QmVmYesEWZm4L1YbrVhCvJEzCDNCvrU56E22HSDXiaC7HZ"
     ]
   },
   Discovery: {
