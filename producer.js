@@ -87,7 +87,7 @@ async function getLatestId() {
   let i = 0
   if (entries.length) {
     const id = entries[entries.length - 1]._id
-    i = parseInt(id.replace('p-', ''))
+    i = parseInt(id.replace('p-', '').replace('c-', ''))
   }
   console.info(`Loaded ${entries.length} entries, last id: ${i}`)
   return i
@@ -101,9 +101,9 @@ async function start() {
   let i = await getLatestId()
   intervalHandle = setInterval(async () => {
     i += 1
-    await publishIpfsMessage('burst-rocks', Buffer.from(`producer_${i}`))
-    await writeDatabase({_id: `p-${i}`, foo: 'bar' + i})
-  }, 2000)
+    await publishIpfsMessage('orbitdb-remote-poc', Buffer.from(`producer_${i}`))
+    await writeDatabase({_id: `p-${i}`, msg: 'from producer' + i})
+  }, 5000)
 }
 
 

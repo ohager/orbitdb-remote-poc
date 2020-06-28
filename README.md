@@ -22,7 +22,7 @@ You need to set the bootstrap addresses for both producer and consumer, i.e.
 
 After configuration run the producer like this:
 
-`npm run start:producer`
+`npm run producer`
 
 On start, it will list the database address, which you need for the consumer as argument:
 
@@ -32,16 +32,20 @@ On start, it will list the database address, which you need for the consumer as 
 
 To run the consumer you need to get the database address from the producer
 
-`npm run start:consumer <address>`
+`npm run consumer <address>`
 
 Example:
 
-`npm run start:consumer <address>`
+`npm run start:consumer /orbitdb/zdpuAzoyTYPqa7BNa2Npm9hyrKcFX1HNNMzh5r8FK7nSdwg5W/producer`
 
-You get the database address from the producers output, the address looks like this:
+You get the database address from the producers output:
 
-`/orbitdb/zdpuAzoyTYPqa7BNa2Npm9hyrKcFX1HNNMzh5r8FK7nSdwg5W/producer`
-
+```
+===========================================
+Database initialized
+Address: /orbitdb/zdpuAzoyTYPqa7BNa2Npm9hyrKcFX1HNNMzh5r8FK7nSdwg5W/producer
+===========================================
+```
 
 ## Troubleshooting
 

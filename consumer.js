@@ -73,11 +73,11 @@ function subscribeReplication() {
     if (!payload) return Promise.resolve()
 
     console.info(`${address} replicated entry`, JSON.stringify(payload))
-    const id = payload.value._id
+    const id = payload.value._id.replace('p-', '')
 
     // Write back -- doing two-directional write on the database
     // The creator must grant write access
-    await database.put({_id: `c-${id}`, "baz": `bar_${id}`})
+    await database.put({_id: `c-${id}`, msg: `from consumer: ${id}`})
   }
 
   database.events.on('replicate', replicateHandler)
@@ -93,7 +93,7 @@ async function start() {
   }
   await bootIpfs()
   await bootOrbitdb(databaseAddress)
-  subscribeTopic('burst-rocks')
+  subscribeTopic('orbitdb-remote-poc')
   subscribeReplication()
 }
 

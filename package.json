@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:producer": "node ./producer.js",
-    "start:consumer": "node ./consumer.js"
+    "producer": "node ./producer.js",
+    "consumer": "node ./consumer.js"
   },
   "repository": {
     "type": "git",
