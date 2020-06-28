@@ -27,24 +27,29 @@ async function bootIpfs() {
   console.log('IPFS booted', id)
 }
 
-const replicateHandler = async (address, {payload}) => {
-  console.log(`${address} replicated entry`, JSON.stringify(payload))
-}
-
 async function bootOrbitdb() {
   console.info('Starting OrbitDb...')
+
+  // This is a way to create an OrbitDB identity based on external ids!
   const identity = await createIdentity({id: 'privateKey'});
   orbitdb = await OrbitDB.createInstance(ipfs, {identity})
   console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity)}`)
+
+  // Granting write access to all
+  // In a real world scenario this should be limited
   database = await orbitdb.docstore('producer', {
     accessController: {
       write: ["*"]
     }
   })
-  await database.load()
+
+  // loading only one item is faster than loading all....
+  // but at least one is needed
+  await database.load(1)
+
+  // The address is used by others who wants to access the database, i.e. consumer
   console.info(`Database initialized - Address: ${database.address}`)
 
-  database.events.on('replicate', replicateHandler)
 }
 
 async function publishIpfsMessage(topic, message) {
@@ -57,19 +62,34 @@ async function writeDatabase(data) {
   console.log('put into database:', hash, JSON.stringify(data))
 }
 
+function subscribeDatabaseUpdates() {
+  database.events.on('replicate', (address, {payload}) => {
+    console.log(`${address} updated database`, JSON.stringify(payload))
+  })
+}
+
+async function getLatestId() {
+  const entries = await database.get('');
+  let i = 0
+  if (entries.length) {
+    const id = entries[entries.length - 1]._id
+    i = parseInt(id.replace('p-', ''))
+  }
+  console.log(`Loaded ${entries.length} entries, last id: ${i}`)
+  return i
+}
+
 async function start() {
   await bootIpfs()
   await bootOrbitdb()
+  subscribeDatabaseUpdates()
 
-  const entries = await database.get('');
-  let i = entries.length ? entries[entries.length - 1]._id : 0
-  console.log(`Loaded ${entries.length} entries, last id: ${i}`)
-
+  let i = await getLatestId()
   intervalHandle = setInterval(async () => {
-    await publishIpfsMessage('burst-rocks', Buffer.from(`producer_${++i}`))
-    await writeDatabase({_id: i, foo: 'bar' + i})
+    i += 1
+    await publishIpfsMessage('burst-rocks', Buffer.from(`producer_${i}`))
+    await writeDatabase({_id: `p-${i}`, foo: 'bar' + i})
   }, 2000)
-
 }
 
 

@@ -18,19 +18,22 @@ onShutdown('consumer', async () => {
 })
 
 async function bootIpfs() {
-  console.log('Booting IPFS...')
+  console.info('Booting IPFS...')
   console.info('Connecting to IPFS daemon', JSON.stringify(Config))
   ipfs = await Ipfs.create(Config)
   const id = await ipfs.id()
-  console.log('IPFS booted', id)
+  console.info('IPFS booted', id)
 
   ipfs.libp2p.on('peer:disconnect', (peerId) => {
-    console.log('Lost Connection"', JSON.stringify(peerId.id))
+    console.info('Lost Connection"', JSON.stringify(peerId.id))
   })
 
   ipfs.libp2p.on('peer:connect', (peer) => {
-    console.log('Producer Found:', peer.id)
+    console.info('Producer Found:', peer.id)
   })
+
+  // If you don't know the IP of the connected counter part on the beginning,
+  // you can add it dynamically, i.e. using a kind of handshake
   // await ipfs.bootstrap.add("/ip4/77.56.66.83/tcp/4001/p2p/QmVmYesEWZm4L1YbrVhCvJEzCDNCvrU56E22HSDXiaC7HZ")
 }
 
@@ -42,33 +45,33 @@ async function bootOrbitdb(databaseAddress) {
   await database.load(1)
   console.info(`Database initialized - Address: ${database.address}`)
 
+}
+
+function subscribeTopic(topic) {
+  ipfs.pubsub.subscribe(topic, msg => console.info(msg.data.toString()))
+  console.info(`subscribed to ${topic}`)
+}
+
+function subscribeReplication() {
   const replicatedHandler = async (address, count) => {
-    console.log(`${address} updated ${count} items`)
+    console.info(`${address} updated ${count} items`)
   }
 
   const replicateHandler = async (address, {payload}) => {
-    console.log(`${address} replicated entry`, JSON.stringify(payload))
+    if (!payload) return Promise.resolve()
 
-    if(!payload) return Promise.resolve()
+    console.info(`${address} replicated entry`, JSON.stringify(payload))
+    const id = payload.value._id
 
-    const newId = 2000 + payload.value._id
-    await database.put({_id: newId, "baz": `bar_${newId}`})
-  }
-
-  const replicationProgressHandler = async (_, ipfsHash,) => {
+    // Write back -- doing two-directional write on the database
+    // The creator must grant write access
+    await database.put({_id: `c-${id}`, "baz": `bar_${id}`})
   }
 
   database.events.on('replicate', replicateHandler)
   database.events.on('replicated', replicatedHandler)
-  // database.events.on('replicate.progress', replicationProgressHandler)
-
 }
 
-function subscribeTopic(topic) {
-  const receiveMsg = (msg) => console.log(msg.data.toString())
-  ipfs.pubsub.subscribe(topic, receiveMsg)
-  console.log(`subscribed to ${topic}`)
-}
 
 async function start() {
   const databaseAddress = process.argv[2]
@@ -79,6 +82,7 @@ async function start() {
   await bootIpfs()
   await bootOrbitdb(databaseAddress)
   subscribeTopic('burst-rocks')
+  subscribeReplication()
 }
 
 
