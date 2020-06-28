@@ -6,6 +6,7 @@ const {onShutdown} = require('node-graceful-shutdown')
 let ipfs
 let intervalHandle
 let orbitdb
+let database
 
 onShutdown('consumer', async () => {
   console.info('Shutting down')
@@ -22,7 +23,12 @@ async function bootIpfs() {
   console.info('Connecting to IPFS daemon', JSON.stringify(Config))
   ipfs = await Ipfs.create(Config)
   const id = await ipfs.id()
-  console.info('IPFS booted', id)
+
+  console.info('\n===========================================')
+  console.info('IPFS booted')
+  console.info('-------------------------------------------')
+  console.info(id)
+  console.info('===========================================\n\n')
 
   ipfs.libp2p.on('peer:disconnect', (peerId) => {
     console.info('Lost Connection"', JSON.stringify(peerId.id))
@@ -40,11 +46,17 @@ async function bootIpfs() {
 async function bootOrbitdb(databaseAddress) {
   console.info('Starting OrbitDb...')
   orbitdb = await OrbitDB.createInstance(ipfs)
-  console.info(`Orbit Database instantiated ${JSON.stringify(orbitdb.identity.id)}`)
-  const database = await orbitdb.open(databaseAddress)
+  console.info('Orbit Database instantiated')
+  console.info('-------------------------------------------')
+  console.info(JSON.stringify(orbitdb.identity.id))
+  database = await orbitdb.open(databaseAddress)
+  console.info('-------------------------------------------')
   await database.load(1)
-  console.info(`Database initialized - Address: ${database.address}`)
 
+  console.info('\n===========================================')
+  console.info('Database initialized')
+  console.info(`Address: ${database.address}`)
+  console.info('===========================================')
 }
 
 function subscribeTopic(topic) {

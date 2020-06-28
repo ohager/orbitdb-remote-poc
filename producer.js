@@ -20,11 +20,22 @@ onShutdown('producer', async () => {
 })
 
 async function bootIpfs() {
-  console.log('Booting IPFS...')
-  console.info('Connecting to IPFS daemon', JSON.stringify(Config))
+  console.info('Booting IPFS...')
   ipfs = await Ipfs.create(Config)
   const id = await ipfs.id()
-  console.log('IPFS booted', id)
+  console.info('\n===========================================')
+  console.info('IPFS booted')
+  console.info('-------------------------------------------')
+  console.info(id)
+  console.info('===========================================\n\n')
+
+  ipfs.libp2p.on('peer:disconnect', (peerId) => {
+    console.info('Lost Connection"', JSON.stringify(peerId.id))
+  })
+
+  ipfs.libp2p.on('peer:connect', (peer) => {
+    console.info('Producer Found:', peer.id)
+  })
 }
 
 async function bootOrbitdb() {
@@ -48,23 +59,26 @@ async function bootOrbitdb() {
   await database.load(1)
 
   // The address is used by others who wants to access the database, i.e. consumer
-  console.info(`Database initialized - Address: ${database.address}`)
+  console.info('\n===========================================')
+  console.info('Database initialized')
+  console.info(`Address: ${database.address}`)
+  console.info('===========================================')
 
 }
 
 async function publishIpfsMessage(topic, message) {
   await ipfs.pubsub.publish(topic, message)
-  console.log(`published [${message.toString()}] to ${topic}`)
+  console.info(`published [${message.toString()}] to ${topic}`)
 }
 
 async function writeDatabase(data) {
   const hash = await database.put(data)
-  console.log('put into database:', hash, JSON.stringify(data))
+  console.info('put into database:', hash, JSON.stringify(data))
 }
 
 function subscribeDatabaseUpdates() {
   database.events.on('replicate', (address, {payload}) => {
-    console.log(`${address} updated database`, JSON.stringify(payload))
+    console.info(`${address} updated database`, JSON.stringify(payload))
   })
 }
 
@@ -75,7 +89,7 @@ async function getLatestId() {
     const id = entries[entries.length - 1]._id
     i = parseInt(id.replace('p-', ''))
   }
-  console.log(`Loaded ${entries.length} entries, last id: ${i}`)
+  console.info(`Loaded ${entries.length} entries, last id: ${i}`)
   return i
 }
 
