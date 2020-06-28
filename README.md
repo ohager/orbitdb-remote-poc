@@ -1,6 +1,6 @@
 # orbitdb-remote-poc
 
-This is proof of concept to demonstrate how IPFS and OrbitDB Pubsub works.
+This is a proof of concept to demonstrate how IPFS and OrbitDB Pubsub works.
 
 The producer creates an OrbitDb database and writes frequently data to it.
 Furthermore, it also publishes a message directly to IPFS, which can be listened to. 
